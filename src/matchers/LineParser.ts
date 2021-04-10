@@ -14,3 +14,28 @@ export function splitNameFromLevel(
     return [name.trim(), level ? parseInt(level.trim(), 10) : undefined];
   }
 }
+
+export class Line {
+  name: string;
+  id: number;
+  uuid: string;
+  line: string;
+  level?: number;
+
+  constructor(line: string, id: string, uuid: string, nameWithLevel: string) {
+    const [name, level] = splitNameFromLevel(nameWithLevel);
+    this.line = line;
+    this.id = parseInt(id, 10);
+    this.uuid = uuid.replaceAll("'", '');
+    this.name = name;
+    this.level = level;
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      level: this.level,
+    };
+  }
+}
