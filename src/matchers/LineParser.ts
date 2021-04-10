@@ -23,8 +23,18 @@ export class Line {
   uuid: string;
   line: string;
   level?: number;
+  /**
+   * Matcher name for debugging purposes
+   */
+  matcher: string;
 
-  constructor(line: string, id: string, uuid: string, nameWithLevel: string) {
+  constructor(
+    line: string,
+    id: string,
+    uuid: string,
+    nameWithLevel: string,
+    matcher: string
+  ) {
     const [name, level] = splitNameFromLevel(nameWithLevel);
     this.line = line;
     this.id = parseInt(id, 10);
@@ -34,6 +44,7 @@ export class Line {
       .map(x => capitalize(x))
       .join(' ');
     this.level = level;
+    this.matcher = matcher;
   }
 
   toJSON() {

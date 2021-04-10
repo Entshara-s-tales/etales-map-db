@@ -1,4 +1,4 @@
-import { UnitMatcher } from '../UnitMatcher';
+import { HeroMatcher, UnitMatcher } from '../UnitMatcher';
 
 describe('UnitMatcher', () => {
   it('properly matches teststring with "lvl"', () => {
@@ -30,5 +30,18 @@ describe('UnitMatcher', () => {
     expect(id).toEqual('110');
     expect(uuid).toEqual('n03Q');
     expect(rest).toEqual('Bandit Lord Lev 52');
+  });
+});
+
+describe('HeroMatcher', () => {
+  it('properly matches hero strings', () => {
+    const testString = "set udg_HeroPool[1]='N009' //Dark Ranger";
+    const match = HeroMatcher.match(testString);
+    expect(match).not.toEqual(null);
+    const [line, id, uuid, rest] = match!;
+    expect(line).toEqual(testString);
+    expect(id).toEqual('1');
+    expect(uuid).toEqual('N009');
+    expect(rest).toEqual('Dark Ranger');
   });
 });

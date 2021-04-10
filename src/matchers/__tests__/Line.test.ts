@@ -9,7 +9,7 @@ describe('UnitMatcher', () => {
     const id = '2';
     const uuid = '1848651830';
     const nameWithLevel = 'Tester Lvl 82';
-    const item = new Line(line, id, uuid, nameWithLevel);
+    const item = new Line(line, id, uuid, nameWithLevel, 'tests');
     expect(item.id).toEqual(2);
     expect(item.uuid).toEqual('1848651830');
     expect(item.name).toEqual('Tester');
@@ -19,7 +19,7 @@ describe('UnitMatcher', () => {
   it('properly serializes class to JSON', () => {
     const match = UnitMatcher.match(TEST_STRING);
     expect(match).not.toEqual(null);
-    const item = new Line('testline', '1234', 'uuid', 'Name lvl 789');
+    const item = new Line('testline', '1234', 'uuid', 'Name lvl 789', 'tests');
     expect(JSON.stringify(item)).toStrictEqual(
       JSON.stringify({
         id: 1234,

@@ -21,9 +21,10 @@ export class Matchers {
     line: string,
     id: string,
     uuid: string,
-    nameWithLevel: string
+    nameWithLevel: string,
+    matcher: string
   ) {
-    return new Line(line, id, uuid, nameWithLevel);
+    return new Line(line, id, uuid, nameWithLevel, matcher);
   }
 
   register(matcher: Matcher): void {
@@ -33,6 +34,10 @@ export class Matchers {
     }
   }
 
+  registerAll(matchers: Matcher[]): void {
+    matchers.forEach(x => this.register(x));
+  }
+
   match(line: string): Line | undefined {
     for (const matcher of this.matchers) {
       const matched = matcher.match(line);
@@ -40,7 +45,7 @@ export class Matchers {
         const [line, id, uuid, nameWithLevel] = matched;
         const item =
           matcher.factory?.(line, id, uuid, nameWithLevel) ??
-          this.factory(line, id, uuid, nameWithLevel);
+          this.factory(line, id, uuid, nameWithLevel, matcher.name);
         if (matcher.cacheKey) {
           set(matcher.cacheKey, item.id, item);
         }
