@@ -1,0 +1,26 @@
+{
+	"include": ["src", "types"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"module": "CommonJS",
+		"lib": ["esnext"],
+		"target": "ESNext",
+		"importHelpers": true,
+		"declaration": true,
+		"sourceMap": true,
+		"rootDir": "./src",
+		"strict": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"moduleResolution": "node",
+		"jsx": "react",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"allowSyntheticDefaultImports": true,
+		"paths": {}
+	}
+}
