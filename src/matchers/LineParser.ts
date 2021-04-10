@@ -1,3 +1,5 @@
+import { capitalize } from 'lodash';
+
 const replacer = /lvl|level|lev/gi;
 const splitBy = /([a-zA-Z0-9| ]+)  ?([\d]+)/i;
 
@@ -27,7 +29,10 @@ export class Line {
     this.line = line;
     this.id = parseInt(id, 10);
     this.uuid = uuid.replaceAll("'", '');
-    this.name = name;
+    this.name = name
+      .split(' ')
+      .map(x => capitalize(x))
+      .join(' ');
     this.level = level;
   }
 
