@@ -38,10 +38,11 @@ let cache = '';
 try {
   cache = JSON.stringify(GLOBAL_CACHE, function replacer(key, value) {
     if (value instanceof Map) {
-      return {
-        dataType: 'Map',
-        value: Array.from(value.entries()), // or with spread: value: [...value]
-      };
+      const results: Record<string, string> = {};
+      for (const k of value.values()) {
+        results[k.data.id] = JSON.stringify(k);
+      }
+      return results;
     } else {
       return value;
     }
