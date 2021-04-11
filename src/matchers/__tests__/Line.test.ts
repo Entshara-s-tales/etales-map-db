@@ -1,31 +1,35 @@
-import { UnitMatcher } from '../UnitMatcher';
-import { Line } from '../LineParser';
+import { Line } from '../Line';
 
-describe('UnitMatcher', () => {
+describe('Line class', () => {
   const TEST_STRING = 'set udg_CreepType[2]=1848651830 //Tester Lvl 82';
 
-  it('properly initializes class for string with "lvl" ', () => {
+  it('creates instance with line and matcher property', () => {
     const line = TEST_STRING;
-    const id = '2';
-    const uuid = '1848651830';
-    const nameWithLevel = 'Tester Lvl 82';
-    const item = new Line(line, id, uuid, nameWithLevel, 'tests');
-    expect(item.id).toEqual(2);
-    expect(item.uuid).toEqual('1848651830');
-    expect(item.name).toEqual('Tester');
-    expect(item.level).toEqual(82);
+    const item = new Line(line, 'tests');
+    expect(item.line).toEqual(line);
+    expect(item.matcher).toEqual('tests');
+  });
+
+  it('properly sets data object', () => {
+    const line = TEST_STRING;
+    const item = new Line(line, 'tests');
+    expect(item.data).toEqual({});
+    const data = {
+      test: 'data',
+      kittens: 'purr',
+    };
+    item.setData(data);
+    expect(item.data).toEqual(data);
   });
 
   it('properly serializes class to JSON', () => {
-    const match = UnitMatcher.match(TEST_STRING);
-    expect(match).not.toEqual(null);
-    const item = new Line('testline', '1234', 'uuid', 'Name lvl 789', 'tests');
-    expect(JSON.stringify(item)).toStrictEqual(
-      JSON.stringify({
-        id: 1234,
-        name: 'Name',
-        level: 789,
-      })
-    );
+    const line = TEST_STRING;
+    const item = new Line(line, 'tests');
+    const data = {
+      test: 'data',
+      kittens: 'purr',
+    };
+    item.setData(data);
+    expect(JSON.stringify(item)).toEqual(JSON.stringify(data));
   });
 });

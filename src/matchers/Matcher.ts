@@ -1,31 +1,17 @@
 import { registerCache, set } from '../Cache';
-import { Line } from './LineParser';
+import { Line, MapData } from './Line';
 
 export interface Matcher {
   name: string;
   match: (line: string) => RegExpMatchArray | null;
-  factory?: (
-    line: string,
-    id: string,
-    uuid: string,
-    nameWithLevel: string
-  ) => Line;
+  factory: (matches: RegExpMatchArray) => MapData;
   cacheKey?: string;
+  getId: (line: Line) => string;
   softCache?: boolean;
 }
 
 export class Matchers {
   private matchers: Matcher[] = [];
-
-  private factory(
-    line: string,
-    id: string,
-    uuid: string,
-    nameWithLevel: string,
-    matcher: string
-  ) {
-    return new Line(line, id, uuid, nameWithLevel, matcher);
-  }
 
   register(matcher: Matcher): void {
     this.matchers.push(matcher);
@@ -38,18 +24,19 @@ export class Matchers {
     matchers.forEach(x => this.register(x));
   }
 
-  match(line: string): Line | undefined {
+  matchMapData(line: string): Line | undefined {
     for (const matcher of this.matchers) {
       const matched = matcher.match(line);
       if (matched !== null) {
-        const [line, id, uuid, nameWithLevel] = matched;
-        const item =
-          matcher.factory?.(line, id, uuid, nameWithLevel) ??
-          this.factory(line, id, uuid, nameWithLevel, matcher.name);
+        const item = new Line(line, matcher.name);
+        const matcherDataObject = matcher.factory(matched);
+        item.setData(matcherDataObject);
         if (matcher.cacheKey) {
-          set(matcher.cacheKey, item.id, item);
+          set(matcher.cacheKey, matcher.getId(item), item);
         }
-        return item;
+        if (item instanceof Line) {
+          return item;
+        }
       }
     }
     return undefined;

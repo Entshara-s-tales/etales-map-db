@@ -1,4 +1,86 @@
-import { HeroMatcher, UnitMatcher } from '../UnitMatcher';
+import {
+  ItemMatcher,
+  HeroMatcher,
+  UnitMatcher,
+  gameObjectFactory,
+  splitNameFromLevel,
+} from '../GameObjectMatchers';
+
+describe('GameObjectMatchers utils', () => {
+  it('splitNameFromLevel should properly translate item string', () => {
+    const TEST_STRING = "Stick Bead lvl 5403 )'";
+    const [name, level] = splitNameFromLevel(TEST_STRING);
+    expect(name).toEqual('Stick Bead');
+    expect(level).toEqual(5403);
+  });
+  it('splitNameFromLevel should properly translate unit string with level writen as "lev"', () => {
+    const TEST_STRING = 'Servant lev 50';
+    const [name, level] = splitNameFromLevel(TEST_STRING);
+    expect(name).toEqual('Servant');
+    expect(level).toEqual(50);
+  });
+  it('splitNameFromLevel should properly translate unit string with level written as "lvl"', () => {
+    const TEST_STRING = 'Centaur Outrunner Lvl 28';
+    const [name, level] = splitNameFromLevel(TEST_STRING);
+    expect(name).toEqual('Centaur Outrunner');
+    expect(level).toEqual(28);
+  });
+  it('splitNameFromLevel should properly translate unit string with level written as "level"', () => {
+    const TEST_STRING = 'Returned level 23';
+    const [name, level] = splitNameFromLevel(TEST_STRING);
+    expect(name).toEqual('Returned');
+    expect(level).toEqual(23);
+  });
+
+  it('splitNameFromLevel should account BOSS suffix as part of the name', () => {
+    const TEST_STRING = 'Magnataur Destroyer BOSS lev 58';
+    const [name, level] = splitNameFromLevel(TEST_STRING);
+    expect(name).toEqual('Magnataur Destroyer BOSS');
+    expect(level).toEqual(58);
+  });
+
+  it('splitNameFromLevel should account (BOSS) suffix as part of the name', () => {
+    const TEST_STRING = 'Bansee (BOSS)';
+    const [name, level] = splitNameFromLevel(TEST_STRING);
+    expect(name).toEqual('Bansee (BOSS)');
+    expect(level).toEqual(undefined);
+  });
+});
+
+describe('GameObjectMatchers factory', () => {
+  it('should use the same factory for all GameObjectMatchers', () => {
+    expect(ItemMatcher.factory).toEqual(gameObjectFactory);
+    expect(HeroMatcher.factory).toEqual(gameObjectFactory);
+    expect(UnitMatcher.factory).toEqual(gameObjectFactory);
+  });
+  it('should get return a data object with keys of [name, id, uuid, level]', () => {
+    const TEST_STRING =
+      'set udg_itmpool[986]=1227901255 //Stick Bead lvl 5403" )';
+    const matches = ItemMatcher.match(TEST_STRING);
+    expect(matches).not.toEqual(null);
+    const dataObject = gameObjectFactory(matches!);
+    expect(dataObject).toEqual({
+      id: 986,
+      uuid: '1227901255',
+      name: 'Stick Bead',
+      level: 5403,
+    });
+  });
+});
+
+describe('ItemMatcher', () => {
+  const TEST_STRING =
+    'set udg_itmpool[986]=1227901255 //Stick Bead lvl 5403" )';
+  it('properly matches item string', () => {
+    const match = ItemMatcher.match(TEST_STRING);
+    expect(match).not.toEqual(null);
+    const [line, id, uuid, rest] = match!;
+    expect(line).toEqual(TEST_STRING);
+    expect(id).toEqual('986');
+    expect(uuid).toEqual('1227901255');
+    expect(rest).toEqual('Stick Bead lvl 5403" )');
+  });
+});
 
 describe('UnitMatcher', () => {
   it('properly matches teststring with "lvl"', () => {

@@ -1,23 +1,23 @@
-import { Line } from './matchers/LineParser';
+import { Line } from './matchers/Line';
 
 type CacheMap<T> = Map<string | number, T>;
 
-const caches: Record<string, CacheMap<Line>> = {};
+export const GLOBAL_CACHE: Record<string, CacheMap<Line>> = {};
 
 export function registerCache(
   collection: string,
   softRegister: boolean = false
 ) {
-  if (caches[collection] && !softRegister) {
+  if (GLOBAL_CACHE[collection] && !softRegister) {
     throw new ReferenceError(
       `Trying to cache register collection ${collection} that's already have been registered.`
     );
   }
-  caches[collection] = new Map();
+  GLOBAL_CACHE[collection] = new Map();
 }
 
 export function get<T extends Line>(collection: string, key: string | number) {
-  const coll: CacheMap<T> = caches[collection] as CacheMap<T>;
+  const coll: CacheMap<T> = GLOBAL_CACHE[collection] as CacheMap<T>;
   return coll.get(key);
 }
 
@@ -26,5 +26,5 @@ export function set<T extends Line>(
   key: string | number,
   value: T
 ) {
-  caches[collection].set(key, value);
+  GLOBAL_CACHE[collection].set(key, value);
 }
