@@ -24,7 +24,7 @@ const lines = scripts.split('\n');
 console.log(`${lines.length} lines of JASS code found.`);
 
 const matchers = new Matchers();
-matchers.registerAll([ItemMatcher, UnitMatcher, HeroMatcher, ItemDropMatcher]);
+matchers.registerAll([HeroMatcher, ItemMatcher, UnitMatcher, ItemDropMatcher]);
 
 for (const line of lines) {
   const l = matchers.matchMapData(line);
@@ -38,6 +38,10 @@ let cache = '';
 try {
   cache = JSON.stringify(GLOBAL_CACHE, function replacer(key, value) {
     if (value instanceof Map) {
+      // TODO: This probably should not be done here, but whatever lol.
+      if (key === 'itemDrop') {
+        return [...value.values()];
+      }
       const results: Record<string, string> = {};
       for (const k of value.values()) {
         results[k.data.id] = JSON.stringify(k);

@@ -33,27 +33,17 @@ export const ItemDropMatcher: Matcher = {
     const [line] = matches;
     const allMatches = Array.from(line.matchAll(/(\d+)/g));
     const ids = allMatches.map(([id]) => id);
-    const [
-      unitId,
-      twentyPercent,
-      fifteenPercent,
-      tenPercent,
-      sevenPercent,
-      threePercent,
-      onePercent,
-      halfPercent,
-      tenthPercent,
-    ] = ids;
+    const [unitId, twenty, fifteen, ten, seven, three, one, half, tenth] = ids;
     const values = {
       unitId,
-      twentyPercent,
-      fifteenPercent,
-      tenPercent,
-      sevenPercent,
-      threePercent,
-      onePercent,
-      halfPercent,
-      tenthPercent,
+      twenty,
+      fifteen,
+      ten,
+      seven,
+      three,
+      one,
+      half,
+      tenth,
     } as any;
     const keys = Object.keys(values);
     for (const key of keys) {
