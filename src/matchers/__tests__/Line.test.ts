@@ -13,10 +13,12 @@ describe('Line class', () => {
   it('properly sets data object', () => {
     const line = TEST_STRING;
     const item = new Line(line, 'tests');
-    expect(item.data).toEqual({});
+    expect(item.data).toEqual(undefined);
     const data = {
-      test: 'data',
-      kittens: 'purr',
+      name: 'kitten',
+      id: 1234,
+      uuid: 'test',
+      level: 15,
     };
     item.setData(data);
     expect(item.data).toEqual(data);
@@ -26,8 +28,10 @@ describe('Line class', () => {
     const line = TEST_STRING;
     const item = new Line(line, 'tests');
     const data = {
-      test: 'data',
-      kittens: 'purr',
+      name: 'kitten',
+      id: 1234,
+      uuid: 'test',
+      level: 15,
     };
     item.setData(data);
     expect(JSON.stringify(item)).toEqual(JSON.stringify(data));

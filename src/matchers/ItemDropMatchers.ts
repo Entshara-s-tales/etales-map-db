@@ -23,6 +23,18 @@ import { Matcher } from './Matcher';
  */
 // const dropRates = [0.2, 0.15, 0.1, 0.07, 0.03, 0.01, 0.005, 0.001];
 
+export type ItemDropData = {
+  unitId: number;
+  twenty: number;
+  fifteen: number;
+  ten: number;
+  seven: number;
+  three: number;
+  one: number;
+  half: number;
+  tenth: number;
+};
+
 const dropRe = /call SetUnitDrop ?\((\d+ *, *)+\d+\)/g;
 export const ItemDropMatcher: Matcher = {
   name: 'itemDrop',

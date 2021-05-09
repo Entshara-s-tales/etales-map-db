@@ -2,6 +2,13 @@ import { capitalize } from 'lodash';
 import { Line, MapData } from './Line';
 import { Matcher } from './Matcher';
 
+export type GameObjectData = {
+  name: string;
+  id: number;
+  uuid: string;
+  level?: number;
+};
+
 const replacer = /lvl|level|lev/gi;
 const splitBy = /([a-zA-Z0-9| ]+)  ?([\d]+)/i;
 
