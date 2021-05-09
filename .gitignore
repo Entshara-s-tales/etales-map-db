@@ -2,5 +2,8 @@
 .DS_Store
 node_modules
 dist
-scripts.j
 /build.db
+#Etales files
+scripts.j
+strings.wts
+etales1.3.4fix.w3x
