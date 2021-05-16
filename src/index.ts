@@ -34,9 +34,9 @@ function getJassLines() {
 function matchJassLines(lines: string[]) {
   const matchers = new Matchers<RegExpMatchArray>();
   matchers.registerAll([
-    // HeroMatcher,
-    // ItemMatcher,
-    // UnitMatcher,
+    HeroMatcher,
+    ItemMatcher,
+    UnitMatcher,
     ItemDropMatcher,
   ]);
 
@@ -76,17 +76,15 @@ function matchStringsLines(strings: string) {
 }
 
 function main() {
-  // const lines = getJassLines();
-  // matchJassLines(lines);
+  const lines = getJassLines();
+  matchJassLines(lines);
 
-  const strings = getStringsFile();
-  const lines = matchStringsLines(strings);
-  console.log(lines);
+  // const strings = getStringsFile();
+  // const lines = matchStringsLines(strings);
+  // console.log(lines);
 
-  // const cache = serialize();
-  // console.log(cache);
-  console.log(GLOBAL_CACHE);
-  // writeToFile(cache);
+  const cache = serialize();
+  writeToFile(cache);
 }
 
 main();
