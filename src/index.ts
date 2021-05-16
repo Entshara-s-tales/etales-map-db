@@ -7,7 +7,12 @@ import {
   ItemMatcher,
   UnitMatcher,
 } from './matchers/GameObjectMatchers';
-import { GLOBAL_CACHE } from './Cache';
+import { GLOBAL_CACHE, serialize } from './Cache';
+import {
+  ParsedWC3String,
+  StringMatcher,
+  WC3String,
+} from './matchers/StringMatcher';
 
 const DEBUG = false;
 
@@ -27,11 +32,11 @@ function getJassLines() {
 }
 
 function matchJassLines(lines: string[]) {
-  const matchers = new Matchers();
+  const matchers = new Matchers<RegExpMatchArray>();
   matchers.registerAll([
-    HeroMatcher,
-    ItemMatcher,
-    UnitMatcher,
+    // HeroMatcher,
+    // ItemMatcher,
+    // UnitMatcher,
     ItemDropMatcher,
   ]);
 
@@ -41,32 +46,6 @@ function matchJassLines(lines: string[]) {
       console.log(`Matcher: "${l.matcher}", line: "${line}"`);
     }
   }
-}
-
-function readCache() {
-  console.log('Stringifying cache');
-  let cache = '';
-  try {
-    cache = JSON.stringify(GLOBAL_CACHE, function replacer(key, value) {
-      if (value instanceof Map) {
-        // TODO: This probably should not be done here, but whatever lol.
-        if (key === 'itemDrop') {
-          return [...value.values()];
-        }
-        const results: Record<string, string> = {};
-        for (const k of value.values()) {
-          results[k.data.id] = JSON.stringify(k);
-        }
-        return results;
-      } else {
-        return value;
-      }
-    });
-  } catch (e) {
-    console.log('Cache was not stringified properly. Exiting early.');
-    throw e;
-  }
-  return cache;
 }
 
 function writeToFile(cache: string) {
@@ -79,11 +58,35 @@ function writeToFile(cache: string) {
   }
 }
 
+function getStringsFile() {
+  const stringsFile = path.resolve(__dirname, '../strings.wts');
+  if (fs.existsSync(stringsFile)) {
+    console.log(`Found stringsFile at ${stringsFile}.`);
+  }
+  console.log(`Reading map.`);
+  const strings = fs.readFileSync(stringsFile, 'utf8');
+  return strings;
+}
+
+function matchStringsLines(strings: string) {
+  const matchers = new Matchers<ParsedWC3String>();
+  matchers.register<WC3String>(StringMatcher);
+  const splitStrings = strings.split('\r\n\r\n');
+  return splitStrings.map(lines => matchers.matchMapData(lines));
+}
+
 function main() {
-  const lines = getJassLines();
-  matchJassLines(lines);
-  const cache = readCache();
-  writeToFile(cache);
+  // const lines = getJassLines();
+  // matchJassLines(lines);
+
+  const strings = getStringsFile();
+  const lines = matchStringsLines(strings);
+  console.log(lines);
+
+  // const cache = serialize();
+  // console.log(cache);
+  console.log(GLOBAL_CACHE);
+  // writeToFile(cache);
 }
 
 main();

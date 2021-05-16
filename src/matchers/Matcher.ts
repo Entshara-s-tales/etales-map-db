@@ -1,30 +1,32 @@
 import { registerCache, set } from '../Cache';
-import { Line, MapData } from './Line';
+import { Line } from './Line';
 
-export interface Matcher {
+export interface Matcher<LineMatch extends unknown, DataType extends unknown> {
   name: string;
-  match: (line: string) => RegExpMatchArray | null;
-  factory: (matches: RegExpMatchArray) => MapData;
+  match: (line: string) => LineMatch | null;
+  factory: (matches: LineMatch) => DataType;
   cacheKey?: string;
-  getId: (line: Line) => string;
+  getId: (line: Line<DataType>) => string;
   softCache?: boolean;
 }
 
-export class Matchers {
-  private matchers: Matcher[] = [];
+export class Matchers<LineMatch extends unknown> {
+  private matchers: Matcher<LineMatch, any>[] = [];
 
-  register(matcher: Matcher): void {
+  register<DataType extends unknown>(
+    matcher: Matcher<LineMatch, DataType>
+  ): void {
     this.matchers.push(matcher);
     if (matcher.cacheKey) {
       registerCache(matcher.cacheKey, !!matcher.softCache);
     }
   }
 
-  registerAll(matchers: Matcher[]): void {
+  registerAll(matchers: Matcher<LineMatch, any>[]): void {
     matchers.forEach(x => this.register(x));
   }
 
-  matchMapData(line: string): Line | undefined {
+  matchMapData(line: string): Line<unknown> | undefined {
     for (const matcher of this.matchers) {
       const matched = matcher.match(line);
       if (matched !== null) {

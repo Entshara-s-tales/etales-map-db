@@ -13,7 +13,7 @@ describe('Line class', () => {
   it('properly sets data object', () => {
     const line = TEST_STRING;
     const item = new Line(line, 'tests');
-    expect(item.data).toEqual({});
+    expect(item.data).toEqual(undefined);
     const data = {
       name: 'kitten',
       id: 1234,

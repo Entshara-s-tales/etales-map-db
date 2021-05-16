@@ -1,20 +1,20 @@
 export type MapData = Record<string | number, string | number | undefined>;
 
-export class Line {
+export class Line<DataType extends unknown> {
   line: string;
   matcher: string;
-  data: MapData = {};
+  data?: DataType;
 
   constructor(line: string, matcher: string) {
     this.line = line;
     this.matcher = matcher;
   }
 
-  setData(data: MapData) {
+  setData(data: DataType) {
     this.data = data;
   }
 
   toJSON() {
-    return this.data;
+    return this.data || {};
   }
 }

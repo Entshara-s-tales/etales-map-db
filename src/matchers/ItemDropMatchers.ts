@@ -1,4 +1,4 @@
-import { uniqueId } from 'lodash';
+import { Line } from './Line';
 import { Matcher } from './Matcher';
 
 // As of save informations, the data table for items is below
@@ -36,10 +36,10 @@ export type ItemDropData = {
 };
 
 const dropRe = /call SetUnitDrop ?\((\d+ *, *)+\d+\)/g;
-export const ItemDropMatcher: Matcher = {
+export const ItemDropMatcher: Matcher<RegExpMatchArray, ItemDropData> = {
   name: 'itemDrop',
   cacheKey: 'itemDrop',
-  getId: () => uniqueId(),
+  getId: (line: Line<ItemDropData>) => line.data!.unitId.toString(),
   match: line => line.match(dropRe),
   factory: matches => {
     const [line] = matches;

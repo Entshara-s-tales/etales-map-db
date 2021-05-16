@@ -1,5 +1,5 @@
 import { capitalize } from 'lodash';
-import { Line, MapData } from './Line';
+import { Line } from './Line';
 import { Matcher } from './Matcher';
 
 export type GameObjectData = {
@@ -34,7 +34,7 @@ export function splitNameFromLevel(
  *  level?: number;
  */
 
-export function gameObjectFactory(matches: RegExpMatchArray): MapData {
+export function gameObjectFactory(matches: RegExpMatchArray): GameObjectData {
   const [, id, objectId, nameWithLevel] = matches;
   const [name, level] = splitNameFromLevel(nameWithLevel);
   const objectName = name
@@ -49,8 +49,8 @@ export function gameObjectFactory(matches: RegExpMatchArray): MapData {
   };
 }
 
-function getId(line: Line): string {
-  return String(line.data['id']);
+function getId(line: Line<GameObjectData>): string {
+  return line.data!.id!.toString();
 }
 
 /**
@@ -64,7 +64,7 @@ const unitRe = /set udg_CreepType\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
 // TODO: handle this in the future
 // const unitMonsterRe = /set s__monster\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
 
-export const UnitMatcher: Matcher = {
+export const UnitMatcher: Matcher<RegExpMatchArray, GameObjectData> = {
   name: 'unit',
   cacheKey: 'unit',
   match: x => x.match(unitRe),
@@ -74,7 +74,7 @@ export const UnitMatcher: Matcher = {
 
 const heroRe = /set udg_HeroPool\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
 
-export const HeroMatcher: Matcher = {
+export const HeroMatcher: Matcher<RegExpMatchArray, GameObjectData> = {
   name: 'hero',
   cacheKey: 'hero',
   match: x => x.match(heroRe),
@@ -83,7 +83,7 @@ export const HeroMatcher: Matcher = {
 };
 
 const itemRe = /set udg_itmpool\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
-export const ItemMatcher: Matcher = {
+export const ItemMatcher: Matcher<RegExpMatchArray, GameObjectData> = {
   name: 'item',
   cacheKey: 'item',
   match: x => x.match(itemRe),

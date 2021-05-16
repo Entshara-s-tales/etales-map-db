@@ -1,4 +1,4 @@
-import { WC3String } from '../StringMatcher';
+import { StringMatcher, WC3String } from '../StringMatcher';
 
 const tNoComment = `STRING 4
 {
@@ -33,7 +33,8 @@ You will receive a special gift
 
 describe('StringMatcher', () => {
   it('should match strings correctly for a stringline with comment', () => {
-    const stringMatcher = new WC3String(t1);
+    const match = StringMatcher.match(t1);
+    const stringMatcher = new WC3String(match!);
     expect(stringMatcher.text).toEqual('You will receive a special gift');
     expect(stringMatcher.stringId).toEqual(574);
     expect(stringMatcher.object).not.toEqual(undefined);
@@ -42,7 +43,8 @@ describe('StringMatcher', () => {
   });
 
   it('should match strings correctly for a stringline without comment', () => {
-    const stringMatcher = new WC3String(tNoComment);
+    const match = StringMatcher.match(tNoComment);
+    const stringMatcher = new WC3String(match!);
     expect(stringMatcher.text).toEqual('Enthashara´s Tales ORPG  v1.3.4');
     expect(stringMatcher.stringId).toEqual(4);
     expect(stringMatcher.object).toEqual(undefined);
