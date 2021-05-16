@@ -5,7 +5,7 @@ import { Matcher } from './Matcher';
 export type GameObjectData = {
   name: string;
   id: number;
-  uuid: string;
+  objectId: string;
   level?: number;
 };
 
@@ -30,12 +30,12 @@ export function splitNameFromLevel(
  * Keys for GameObjectData:
  *  name: string;
  *  id: number;
- *  uuid: string;
+ *  objectId: string;
  *  level?: number;
  */
 
 export function gameObjectFactory(matches: RegExpMatchArray): MapData {
-  const [, id, uuid, nameWithLevel] = matches;
+  const [, id, objectId, nameWithLevel] = matches;
   const [name, level] = splitNameFromLevel(nameWithLevel);
   const objectName = name
     .split(' ')
@@ -44,7 +44,7 @@ export function gameObjectFactory(matches: RegExpMatchArray): MapData {
   return {
     name: objectName,
     id: parseInt(id, 10),
-    uuid: uuid.replaceAll("'", ''),
+    objectId: objectId.replaceAll("'", ''),
     level,
   };
 }

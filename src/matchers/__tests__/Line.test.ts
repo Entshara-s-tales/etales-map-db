@@ -17,7 +17,7 @@ describe('Line class', () => {
     const data = {
       name: 'kitten',
       id: 1234,
-      uuid: 'test',
+      objectId: 'test',
       level: 15,
     };
     item.setData(data);
@@ -30,7 +30,7 @@ describe('Line class', () => {
     const data = {
       name: 'kitten',
       id: 1234,
-      uuid: 'test',
+      objectId: 'test',
       level: 15,
     };
     item.setData(data);

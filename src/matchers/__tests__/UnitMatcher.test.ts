@@ -53,7 +53,7 @@ describe('GameObjectMatchers factory', () => {
     expect(HeroMatcher.factory).toEqual(gameObjectFactory);
     expect(UnitMatcher.factory).toEqual(gameObjectFactory);
   });
-  it('should get return a data object with keys of [name, id, uuid, level]', () => {
+  it('should get return a data object with keys of [name, id, objectId, level]', () => {
     const TEST_STRING =
       'set udg_itmpool[986]=1227901255 //Stick Bead lvl 5403" )';
     const matches = ItemMatcher.match(TEST_STRING);
@@ -61,7 +61,7 @@ describe('GameObjectMatchers factory', () => {
     const dataObject = gameObjectFactory(matches!);
     expect(dataObject).toEqual({
       id: 986,
-      uuid: '1227901255',
+      objectId: '1227901255',
       name: 'Stick Bead',
       level: 5403,
     });
@@ -74,10 +74,10 @@ describe('ItemMatcher', () => {
   it('properly matches item string', () => {
     const match = ItemMatcher.match(TEST_STRING);
     expect(match).not.toEqual(null);
-    const [line, id, uuid, rest] = match!;
+    const [line, id, objectId, rest] = match!;
     expect(line).toEqual(TEST_STRING);
     expect(id).toEqual('986');
-    expect(uuid).toEqual('1227901255');
+    expect(objectId).toEqual('1227901255');
     expect(rest).toEqual('Stick Bead lvl 5403" )');
   });
 });
@@ -87,30 +87,30 @@ describe('UnitMatcher', () => {
     const testString = 'set udg_CreepType[2]=1848651830 //Tester Lvl 82';
     const match = UnitMatcher.match(testString);
     expect(match).not.toEqual(null);
-    const [line, id, uuid, rest] = match!;
+    const [line, id, objectId, rest] = match!;
     expect(line).toEqual(testString);
     expect(id).toEqual('2');
-    expect(uuid).toEqual('1848651830');
+    expect(objectId).toEqual('1848651830');
     expect(rest).toEqual('Tester Lvl 82');
   });
   it('properly matches teststring with "level"', () => {
     const testString = "set udg_CreepType[102]='n03D' //Returned level 23";
     const match = UnitMatcher.match(testString);
     expect(match).not.toEqual(null);
-    const [line, id, uuid, rest] = match!;
+    const [line, id, objectId, rest] = match!;
     expect(line).toEqual(testString);
     expect(id).toEqual('102');
-    expect(uuid).toEqual('n03D');
+    expect(objectId).toEqual('n03D');
     expect(rest).toEqual('Returned level 23');
   });
   it('properly matches teststring with "lev"', () => {
     const testString = "set udg_CreepType[110]='n03Q' //Bandit Lord Lev 52";
     const match = UnitMatcher.match(testString);
     expect(match).not.toEqual(null);
-    const [line, id, uuid, rest] = match!;
+    const [line, id, objectId, rest] = match!;
     expect(line).toEqual(testString);
     expect(id).toEqual('110');
-    expect(uuid).toEqual('n03Q');
+    expect(objectId).toEqual('n03Q');
     expect(rest).toEqual('Bandit Lord Lev 52');
   });
 });
@@ -120,10 +120,10 @@ describe('HeroMatcher', () => {
     const testString = "set udg_HeroPool[1]='N009' //Dark Ranger";
     const match = HeroMatcher.match(testString);
     expect(match).not.toEqual(null);
-    const [line, id, uuid, rest] = match!;
+    const [line, id, objectId, rest] = match!;
     expect(line).toEqual(testString);
     expect(id).toEqual('1');
-    expect(uuid).toEqual('N009');
+    expect(objectId).toEqual('N009');
     expect(rest).toEqual('Dark Ranger');
   });
 });
