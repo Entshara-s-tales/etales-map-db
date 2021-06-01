@@ -27,6 +27,3 @@ jobs:
 
       - name: Test
         run: yarn test
-
-      - name: Pack for the OS
-        run: yarn pack
