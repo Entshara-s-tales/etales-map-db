@@ -1,4 +1,6 @@
-import { StringMatcher, WC3String } from '../StringMatcher';
+import { expect } from "chai";
+
+import { StringMatcher, WC3String } from "../../src/matchers/StringMatcher";
 
 const tNoComment = `STRING 4
 {
@@ -31,22 +33,22 @@ You will receive a special gift
 // You will receive a special gift
 // }`;
 
-describe('StringMatcher', () => {
-  it('should match strings correctly for a stringline with comment', () => {
+describe("StringMatcher", () => {
+  it("should match strings correctly for a stringline with comment", () => {
     const match = StringMatcher.match(t1);
     const stringMatcher = new WC3String(match!);
-    expect(stringMatcher.text).toEqual('You will receive a special gift');
-    expect(stringMatcher.stringId).toEqual(574);
-    expect(stringMatcher.object).not.toEqual(undefined);
-    expect(stringMatcher.object!.type).toEqual('item');
-    expect(stringMatcher.object!.id).toEqual('I00C');
+    expect(stringMatcher.text).to.equal("You will receive a special gift");
+    expect(stringMatcher.stringId).to.equal(574);
+    expect(stringMatcher.object).not.to.equal(undefined);
+    expect(stringMatcher.object!.type).to.equal("item");
+    expect(stringMatcher.object!.id).to.equal("I00C");
   });
 
-  it('should match strings correctly for a stringline without comment', () => {
+  it("should match strings correctly for a stringline without comment", () => {
     const match = StringMatcher.match(tNoComment);
     const stringMatcher = new WC3String(match!);
-    expect(stringMatcher.text).toEqual('Enthashara´s Tales ORPG  v1.3.4');
-    expect(stringMatcher.stringId).toEqual(4);
-    expect(stringMatcher.object).toEqual(undefined);
+    expect(stringMatcher.text).to.equal("Enthashara´s Tales ORPG  v1.3.4");
+    expect(stringMatcher.stringId).to.equal(4);
+    expect(stringMatcher.object).to.equal(undefined);
   });
 });

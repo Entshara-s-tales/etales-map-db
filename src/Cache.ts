@@ -1,13 +1,10 @@
-import { Line } from './matchers/Line';
+import { Line } from "./matchers/Line";
 
 type CacheMap<T> = Map<string | number, T>;
 
 export const GLOBAL_CACHE: Record<string, CacheMap<Line<unknown>>> = {};
 
-export function registerCache(
-  collection: string,
-  softRegister: boolean = false
-) {
+export function registerCache(collection: string, softRegister = false) {
   if (GLOBAL_CACHE[collection] && !softRegister) {
     throw new ReferenceError(
       `Trying to cache register collection ${collection} that's already have been registered.`
@@ -33,12 +30,12 @@ export function set<T extends Line<unknown>>(
 }
 
 export function serialize() {
-  let cache = '';
+  let cache = "";
   try {
-    cache = JSON.stringify(GLOBAL_CACHE, function replacer(key, value) {
+    cache = JSON.stringify(GLOBAL_CACHE, (key, value) => {
       if (value instanceof Map) {
         // TODO: This probably should not be done here, but whatever lol.
-        if (key === 'itemDrop') {
+        if (key === "itemDrop") {
           return [...value.values()];
         }
         const results: Record<string, string> = {};
@@ -46,13 +43,13 @@ export function serialize() {
           results[k.data.id] = JSON.stringify(k);
         }
         return results;
-      } else {
-        return value;
       }
+      return value;
     });
-  } catch (e) {
-    console.log('Cache was not stringified properly. Exiting early.');
-    throw e;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Cache was not stringified properly. Exiting early.");
+    throw error;
   }
   return cache;
 }

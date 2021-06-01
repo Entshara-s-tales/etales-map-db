@@ -1,5 +1,5 @@
-import { registerCache, set } from '../Cache';
-import { Line } from './Line';
+import { registerCache, set } from "../cache";
+import { Line } from "./Line";
 
 export interface Matcher<LineMatch extends unknown, DataType extends unknown> {
   name: string;
@@ -18,12 +18,12 @@ export class Matchers<LineMatch extends unknown> {
   ): void {
     this.matchers.push(matcher);
     if (matcher.cacheKey) {
-      registerCache(matcher.cacheKey, !!matcher.softCache);
+      registerCache(matcher.cacheKey, Boolean(matcher.softCache));
     }
   }
 
   registerAll(matchers: Matcher<LineMatch, any>[]): void {
-    matchers.forEach(x => this.register(x));
+    matchers.forEach((x) => this.register(x));
   }
 
   matchMapData(line: string): Line<unknown> | undefined {

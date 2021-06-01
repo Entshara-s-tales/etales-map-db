@@ -1,5 +1,5 @@
-import { Line } from './Line';
-import { Matcher } from './Matcher';
+import { Line } from "./Line";
+import { Matcher } from "./Matcher";
 
 export type ParsedWC3String = {
   id: number;
@@ -7,8 +7,8 @@ export type ParsedWC3String = {
   comment?: string;
 };
 
-type CommentType = 'Items' | 'Abilities' | 'Units' | 'Doodads';
-type StringType = 'ability' | 'item' | 'unit' | 'doodad' | 'unknown';
+type CommentType = "Items" | "Abilities" | "Units" | "Doodads";
+type StringType = "ability" | "item" | "unit" | "doodad" | "unknown";
 
 type ParsedComment = {
   type: CommentType;
@@ -31,42 +31,9 @@ export type WC3StringDataObject = {
   object: WC3StringObject | undefined;
 };
 
-export class WC3String {
-  static ObjectTypeMapper = {
-    Items: 'item',
-    Abilities: 'ability',
-    Units: 'unit',
-    Doodads: 'doodad',
-  };
-
-  stringId: number;
-  text: string;
-  comment: string = '';
-  object: WC3StringObject | undefined;
-
-  constructor(parsedString: ParsedWC3String) {
-    const { id, value, comment } = parsedString;
-    this.text = value;
-    this.stringId = id;
-    if (comment) {
-      const parsedComment = parseComment(comment);
-      if (parsedComment) {
-        const { type, id, name, where } = parsedComment;
-        const mappedType = (WC3String.ObjectTypeMapper[type] ||
-          'unknown') as StringType;
-        this.object = {
-          type: mappedType,
-          id,
-          name,
-          where,
-        };
-      }
-    }
-  }
-}
-
 function parseComment(comment: string): ParsedComment | undefined {
-  const re = /\/\/ (?<type>Items|Abilities|Units|Doodads): (?<id>[a-zA-Z0-9]+) \((?<name>.*)\), (?<where>.*)/;
+  const re =
+    /\/\/ (?<type>Items|Abilities|Units|Doodads): (?<id>[a-zA-Z0-9]+) \((?<name>.*)\), (?<where>.*)/;
   const match = comment.match(re);
   if (match?.groups) {
     const { type, id, name, where } = match.groups;
@@ -81,11 +48,11 @@ function parseComment(comment: string): ParsedComment | undefined {
 }
 
 function parseId(stringWithId: string): number {
-  return parseInt(stringWithId.replace('STRING ', ''), 10);
+  return parseInt(stringWithId.replace("STRING ", ""), 10);
 }
 
 function match(wc3String: string): ParsedWC3String {
-  const lines = wc3String.split('\n');
+  const lines = wc3String.split("\n");
   // Has comment
   if (lines.length === 5) {
     const [withId, comment, , value] = lines;
@@ -102,8 +69,42 @@ function match(wc3String: string): ParsedWC3String {
   };
 }
 
+export class WC3String {
+  static ObjectTypeMapper = {
+    Items: "item",
+    Abilities: "ability",
+    Units: "unit",
+    Doodads: "doodad",
+  };
+
+  stringId: number;
+  text: string;
+  comment = "";
+  object: WC3StringObject | undefined;
+
+  constructor(parsedString: ParsedWC3String) {
+    const { id, value, comment } = parsedString;
+    this.text = value;
+    this.stringId = id;
+    if (comment) {
+      const parsedComment = parseComment(comment);
+      if (parsedComment) {
+        const { type, id, name, where } = parsedComment;
+        const mappedType = (WC3String.ObjectTypeMapper[type] ||
+          "unknown") as StringType;
+        this.object = {
+          type: mappedType,
+          id,
+          name,
+          where,
+        };
+      }
+    }
+  }
+}
+
 export const StringMatcher: Matcher<ParsedWC3String, WC3String> = {
-  name: 'strings',
+  name: "strings",
   match: (line: string) => match(line),
   getId: (line: Line<WC3String>) => String(line.data!.stringId),
   factory(matched: ParsedWC3String) {

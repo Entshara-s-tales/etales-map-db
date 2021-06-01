@@ -1,0 +1,8 @@
+{
+  "extends": ["oclif", "oclif-typescript", "prettier"],
+  "rules": {
+    "unicorn/prefer-spread": 0,
+    "unicorn/filename-case": 0,
+    "lines-between-class-members": 0
+  }
+}

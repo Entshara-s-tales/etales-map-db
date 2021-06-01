@@ -1,9 +1,14 @@
-*.log
-.DS_Store
+*-debug.log
+*-error.log
+/.nyc_output
+/dist
+/lib
+/tmp
+/yarn.lock
 node_modules
-dist
-/build.db
-#Etales files
-scripts.j
-strings.wts
-etales1.3.4fix.w3x
+.eslintcache
+.history
+
+
+# Dev
+mapfile

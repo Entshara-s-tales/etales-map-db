@@ -1,5 +1,5 @@
-import { Line } from './Line';
-import { Matcher } from './Matcher';
+import { Line } from "./Line";
+import { Matcher } from "./Matcher";
 
 // As of save informations, the data table for items is below
 // We need to use only items from the udg_itmpool anyways, as it contains all the map's items.
@@ -37,11 +37,11 @@ export type ItemDropData = {
 
 const dropRe = /call SetUnitDrop ?\((\d+ *, *)+\d+\)/g;
 export const ItemDropMatcher: Matcher<RegExpMatchArray, ItemDropData> = {
-  name: 'itemDrop',
-  cacheKey: 'itemDrop',
+  name: "itemDrop",
+  cacheKey: "itemDrop",
   getId: (line: Line<ItemDropData>) => line.data!.unitId.toString(),
-  match: line => line.match(dropRe),
-  factory: matches => {
+  match: (line) => line.match(dropRe),
+  factory: (matches) => {
     const [line] = matches;
     const allMatches = Array.from(line.matchAll(/(\d+)/g));
     const ids = allMatches.map(([id]) => id);

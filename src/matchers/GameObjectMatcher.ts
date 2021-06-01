@@ -1,6 +1,6 @@
-import { capitalize } from 'lodash';
-import { Line } from './Line';
-import { Matcher } from './Matcher';
+import { capitalize } from "lodash";
+import { Line } from "./Line";
+import { Matcher } from "./Matcher";
 
 export type GameObjectData = {
   name: string;
@@ -15,15 +15,14 @@ const splitBy = /([a-zA-Z0-9| ]+)  ?([\d]+)/i;
 export function splitNameFromLevel(
   nameWithLevel: string
 ): [string, number | undefined] {
-  const cleanedNamed = nameWithLevel.replaceAll(replacer, '');
+  const cleanedNamed = nameWithLevel.replaceAll(replacer, "");
   const results = cleanedNamed.trim().split(splitBy);
   if (results.length === 1) {
     return [results[0].trim(), undefined];
-  } else {
-    // First one is invalid here
-    const [, name, level] = results;
-    return [name.trim(), level ? parseInt(level.trim(), 10) : undefined];
   }
+  // First one is invalid here
+  const [, name, level] = results;
+  return [name.trim(), level ? parseInt(level.trim(), 10) : undefined];
 }
 
 /**
@@ -38,13 +37,13 @@ export function gameObjectFactory(matches: RegExpMatchArray): GameObjectData {
   const [, id, objectId, nameWithLevel] = matches;
   const [name, level] = splitNameFromLevel(nameWithLevel);
   const objectName = name
-    .split(' ')
-    .map(x => capitalize(x))
-    .join(' ');
+    .split(" ")
+    .map((x) => capitalize(x))
+    .join(" ");
   return {
     name: objectName,
     id: parseInt(id, 10),
-    objectId: objectId.replaceAll("'", ''),
+    objectId: objectId.replaceAll("'", ""),
     level,
   };
 }
@@ -65,9 +64,9 @@ const unitRe = /set udg_CreepType\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
 // const unitMonsterRe = /set s__monster\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
 
 export const UnitMatcher: Matcher<RegExpMatchArray, GameObjectData> = {
-  name: 'unit',
-  cacheKey: 'unit',
-  match: x => x.match(unitRe),
+  name: "unit",
+  cacheKey: "unit",
+  match: (x) => x.match(unitRe),
   factory: gameObjectFactory,
   getId,
 };
@@ -75,18 +74,18 @@ export const UnitMatcher: Matcher<RegExpMatchArray, GameObjectData> = {
 const heroRe = /set udg_HeroPool\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
 
 export const HeroMatcher: Matcher<RegExpMatchArray, GameObjectData> = {
-  name: 'hero',
-  cacheKey: 'hero',
-  match: x => x.match(heroRe),
+  name: "hero",
+  cacheKey: "hero",
+  match: (x) => x.match(heroRe),
   factory: gameObjectFactory,
   getId,
 };
 
 const itemRe = /set udg_itmpool\[(.*)\]='?([\da-zA-Z]+)'? * \/\/(.*)/;
 export const ItemMatcher: Matcher<RegExpMatchArray, GameObjectData> = {
-  name: 'item',
-  cacheKey: 'item',
-  match: x => x.match(itemRe),
+  name: "item",
+  cacheKey: "item",
+  match: (x) => x.match(itemRe),
   factory: gameObjectFactory,
   getId,
 };
