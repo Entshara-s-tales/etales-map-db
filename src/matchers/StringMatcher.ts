@@ -1,5 +1,6 @@
+import { groupBy } from "lodash/fp";
 import { Line } from "./Line";
-import { Matcher } from "./Matcher";
+import { Matcher, Matchers } from "./Matcher";
 
 export type ParsedWC3String = {
   id: number;
@@ -31,20 +32,59 @@ export type WC3StringDataObject = {
   object: WC3StringObject | undefined;
 };
 
-function parseComment(comment: string): ParsedComment | undefined {
-  const re =
-    /\/\/ (?<type>Items|Abilities|Units|Doodads): (?<id>[a-zA-Z0-9]+) \((?<name>.*)\), (?<where>.*)/;
-  const match = comment.match(re);
-  if (match?.groups) {
-    const { type, id, name, where } = match.groups;
-    return {
-      type: type as CommentType,
-      id,
-      name,
-      where,
-    };
+export type WC3StringGroupedCollection = Record<
+  "Hotkey" | "Name" | "Tip" | "Description" | "Ubertip" | "EditorSuffix",
+  Line<WC3String>[]
+>;
+
+export class WC3String {
+  static ObjectTypeMapper = {
+    Items: "item",
+    Abilities: "ability",
+    Units: "unit",
+    Doodads: "doodad",
+  };
+
+  stringId: number;
+  text: string;
+  comment = "";
+  object: WC3StringObject | undefined;
+
+  constructor(parsedString: ParsedWC3String) {
+    const { id, value, comment } = parsedString;
+    this.text = value?.replace("\r", "");
+    this.stringId = id;
+    if (comment) {
+      const parsedComment = this.parseComment(comment);
+      if (parsedComment) {
+        const { type, id, name, where } = parsedComment;
+        const mappedType = (WC3String.ObjectTypeMapper[type] ||
+          "unknown") as StringType;
+        this.object = {
+          type: mappedType,
+          id,
+          name,
+          where,
+        };
+      }
+    }
   }
-  return undefined;
+
+  private parseComment(comment: string): ParsedComment | undefined {
+    const re =
+      /\/\/ (?<type>Items|Abilities|Units|Doodads): (?<id>[a-zA-Z0-9]+) \((?<name>.*)\), (?<where>.*)/;
+    const match = comment.match(re);
+    if (match?.groups) {
+      const { type, id, name, where } = match.groups;
+      return {
+        type: type as CommentType,
+        id,
+        name,
+        where,
+      };
+    }
+    return undefined;
+  }
 }
 
 function parseId(stringWithId: string): number {
@@ -69,40 +109,6 @@ function match(wc3String: string): ParsedWC3String {
   };
 }
 
-export class WC3String {
-  static ObjectTypeMapper = {
-    Items: "item",
-    Abilities: "ability",
-    Units: "unit",
-    Doodads: "doodad",
-  };
-
-  stringId: number;
-  text: string;
-  comment = "";
-  object: WC3StringObject | undefined;
-
-  constructor(parsedString: ParsedWC3String) {
-    const { id, value, comment } = parsedString;
-    this.text = value;
-    this.stringId = id;
-    if (comment) {
-      const parsedComment = parseComment(comment);
-      if (parsedComment) {
-        const { type, id, name, where } = parsedComment;
-        const mappedType = (WC3String.ObjectTypeMapper[type] ||
-          "unknown") as StringType;
-        this.object = {
-          type: mappedType,
-          id,
-          name,
-          where,
-        };
-      }
-    }
-  }
-}
-
 export const StringMatcher: Matcher<ParsedWC3String, WC3String> = {
   name: "strings",
   match: (line: string) => match(line),
@@ -111,3 +117,60 @@ export const StringMatcher: Matcher<ParsedWC3String, WC3String> = {
     return new WC3String(matched);
   },
 };
+
+export function matchStringsLines(strings: string): Line<WC3String>[] {
+  const matchers = new Matchers<ParsedWC3String>();
+  matchers.register<WC3String>(StringMatcher);
+  const splitStrings = strings.split("\r\n\r\n");
+  return splitStrings
+    .map((lines) => matchers.match(lines))
+    .filter((x) => x) as Line<WC3String>[];
+}
+
+type HumanReadableItem = {
+  id: string;
+  description: string;
+  name: string;
+};
+
+function getValue(lines: Line<WC3String>[] = []) {
+  if (lines.length > 0) {
+    return lines[0].data?.text;
+  }
+  return undefined;
+}
+
+function getDefaultName(lines: Line<WC3String>[] = []) {
+  if (lines.length > 0) {
+    return lines[0].data?.object?.name;
+  }
+  return undefined;
+}
+
+type ItemObject = {
+  name: string;
+  description: string;
+  ubertip: string;
+};
+
+export function formatStringsDataDump(items: Line<WC3String>[]) {
+  const grouped = groupBy((i: Line<WC3String>) => i?.data?.object?.id)(items);
+  const group = groupBy((line: Line<WC3String>) =>
+    line.data?.object?.where.replace(/ (\(.*\))/, "").toLowerCase()
+  );
+  const keys = Object.keys(grouped);
+  const result: Record<string, Partial<ItemObject>> = {};
+  for (const key of keys) {
+    const items = grouped[key];
+    const labelGrouped = group(items);
+    const { name, description, ubertip } = labelGrouped;
+    result[key] = {
+      name:
+        getValue(name) ||
+        getDefaultName(description) ||
+        getDefaultName(ubertip),
+      description: getValue(description) || getValue(ubertip),
+    };
+  }
+  return result;
+}
