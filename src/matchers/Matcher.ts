@@ -1,4 +1,4 @@
-import { registerCache, set } from "../cache";
+import { registerCache, set } from "../Cache";
 import { Line } from "./Line";
 
 export interface Matcher<LineMatch extends unknown, DataType extends unknown> {
@@ -26,7 +26,7 @@ export class Matchers<LineMatch extends unknown> {
     matchers.forEach((x) => this.register(x));
   }
 
-  matchMapData(line: string): Line<unknown> | undefined {
+  match(line: string): Line<unknown> | undefined {
     for (const matcher of this.matchers) {
       const matched = matcher.match(line);
       if (matched !== null) {
