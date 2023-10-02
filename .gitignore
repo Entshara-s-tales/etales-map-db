@@ -13,7 +13,7 @@ node_modules
 # Dev
 mapfile
 unpacked
-
+mocks
 
 # Firebase
 firebase-secret.json
