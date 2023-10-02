@@ -23,7 +23,7 @@ $ npm install -g etales-db-updater
 $ etales-db-updater COMMAND
 running command...
 $ etales-db-updater (-v|--version|version)
-etales-db-updater/0.0.0 darwin-x64 node-v16.2.0
+etales-db-updater/0.0.0 darwin-x64 node-v17.2.0
 $ etales-db-updater --help [COMMAND]
 USAGE
   $ etales-db-updater COMMAND
